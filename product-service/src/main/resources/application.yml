@@ -1,0 +1,19 @@
+server:
+  port: 8080
+
+app:
+  version: v1
+  simulate-error: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never
+
+spring:
+  application:
+    name: product-service

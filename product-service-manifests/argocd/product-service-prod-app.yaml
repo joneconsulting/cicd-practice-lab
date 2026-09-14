@@ -1,0 +1,20 @@
+# 이 파일이 이 강의의 최종 아키텍처에서 유일하게 계속 살아있는 ArgoCD Application입니다.
+# dev/staging은 Jenkins가 직접 배포(Push)하므로 별도 Application이 없습니다 — Section 6 참고.
+# syncPolicy를 비워두어(수동 Sync) 운영자가 argocd app sync로 직접 승인해야만 배포됩니다.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: product-service-prod
+  namespace: argocd
+spec:
+  project: product-service
+  source:
+    repoURL: https://github.com/<내계정>/product-service-manifests.git
+    targetRevision: main
+    path: overlays/production
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: product-service-prod
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true

@@ -1,0 +1,25 @@
+# Section 5 실습용 — Application CRD와 Self-Heal을 처음 배울 때 사용하는 예제입니다.
+# 이 파일은 학습용 샌드박스입니다: App of Apps·ApplicationSet 실습으로 넘어가기 전에는
+# argocd app delete product-service-dev 로 지운 뒤 다음 실습을 진행하세요.
+# (하이브리드 구조가 완성되는 Section 6부터는 dev/staging을 ArgoCD가 아니라 Jenkins가
+#  직접 배포합니다 — 최종 아키텍처에는 이 Application이 존재하지 않습니다.)
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: product-service-dev
+  namespace: argocd
+spec:
+  project: product-service
+  source:
+    repoURL: https://github.com/<내계정>/product-service-manifests.git
+    targetRevision: main
+    path: overlays/dev
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: product-service-dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

@@ -1,0 +1,20 @@
+services:
+  jenkins:
+    build: .
+    container_name: jenkins-k8s-lab
+    ports:
+      - "8080:8080"
+    environment:
+      - JENKINS_ADMIN_PASSWORD=${JENKINS_ADMIN_PASSWORD:-admin123!}
+    # kubernetes.docker.internal 이름을 그대로 쓰면서 호스트로 연결되게 함
+    # (이름을 바꾸지 않으므로 TLS 인증서가 그대로 유효 — insecure 옵션이 필요 없어짐)
+    extra_hosts:
+      - "kubernetes.docker.internal:host-gateway"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${KUBE_CONFIG_PATH}:/var/jenkins_home/.kube/config:ro
+    restart: unless-stopped
+
+volumes:
+  jenkins_home:

@@ -1,0 +1,35 @@
+# Section 5 실습용 — List Generator로 여러 환경 Application을 한번에 만들어보는 예제입니다.
+# production은 포함하지 않았습니다 — production은 반드시 수동 Sync(syncPolicy: {})여야 하는데,
+# ApplicationSet 템플릿은 모든 환경에 같은 syncPolicy를 적용하므로 이 예제처럼 자동 Sync를
+# 쓰면 production에도 자동 배포가 걸려 Section 6의 설계 원칙과 충돌합니다.
+# (서비스별로 다른 syncPolicy가 필요하면 Matrix Generator나 별도 ApplicationSet으로 분리하세요.)
+# 적용 전 product-service-dev(위 파일로 만든 것)를 먼저 삭제해두세요 — 이름이 겹칩니다.
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: product-service
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - env: dev
+          - env: staging
+  template:
+    metadata:
+      name: 'product-service-{{env}}'
+    spec:
+      project: product-service
+      source:
+        repoURL: https://github.com/<내계정>/product-service-manifests.git
+        targetRevision: main
+        path: 'overlays/{{env}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: 'product-service-{{env}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

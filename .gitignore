@@ -1,0 +1,5 @@
+product-service/build/
+product-service/.gradle/
+product-service/*.log
+product-service/.idea/
+product-service/*.iml

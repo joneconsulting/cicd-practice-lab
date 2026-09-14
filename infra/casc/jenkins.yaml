@@ -1,0 +1,60 @@
+jenkins:
+  systemMessage: "Jenkins (Docker) — product-service CI/CD 실습 환경"
+  numExecutors: 2
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "admin"
+          password: "${JENKINS_ADMIN_PASSWORD:-admin123!}"
+        - id: "dev1"
+          password: "dev12345!"
+        - id: "release-mgr"
+          password: "release12345!"
+
+  # Section 4 "Jenkins RBAC — Role-based Authorization Strategy" 실습과 그대로 대응합니다.
+  # 실무에서는 이 사용자 목록 대신 SSO(OIDC/LDAP) 그룹을 연동합니다 (Section 8 참고).
+  authorizationStrategy:
+    roleBased:
+      roles:
+        global:
+          - name: "admin-role"
+            description: "전체 Job 설정 변경, Credentials 관리, 플러그인 설치"
+            permissions:
+              - "Overall/Administer"
+            assignments:
+              - "admin"
+          - name: "authenticated-read"
+            description: "로그인한 모든 사용자의 기본 조회 권한"
+            permissions:
+              - "Overall/Read"
+            assignments:
+              - "authenticated"
+        items:
+          - name: "dev-role"
+            description: "product-service-pipeline Job의 Build, Read만 허용"
+            pattern: "product-service.*"
+            permissions:
+              - "Job/Build"
+              - "Job/Read"
+              - "Job/Workspace"
+            assignments:
+              - "dev1"
+          - name: "release-managers"
+            description: "Job Build/Read + staging/production Approval 승인 권한"
+            pattern: "product-service.*"
+            permissions:
+              - "Job/Build"
+              - "Job/Read"
+              - "Job/Cancel"
+            assignments:
+              - "release-mgr"
+
+unclassified:
+  # Slack Notification 플러그인 설정입니다. 플러그인 버전에 따라 JCasC 키가 조금씩
+  # 다를 수 있으니, 오류가 나면 이 블록을 지우고 Jenkins 관리 > System 화면에서
+  # 직접 설정해도 무방합니다. tokenCredentialId는 Credentials Store에 등록한
+  # Slack Incoming Webhook 토큰(Secret text)의 ID를 넣으세요.
+  slackNotifier:
+    teamDomain: "your-workspace"
+    tokenCredentialId: "slack-webhook-token"

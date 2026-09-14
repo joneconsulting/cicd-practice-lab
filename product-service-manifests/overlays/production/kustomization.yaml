@@ -1,0 +1,18 @@
+# production overlay는 base의 Deployment를 상속하지 않고, 자체 Rollout 리소스를 사용합니다.
+# (Section 3~6까지는 base를 그대로 상속하는 일반 Deployment 오버레이로 두어도 되지만,
+#  Section 7에서 Progressive Delivery를 도입하면서 이 파일로 교체합니다. 이 저장소는
+#  강의를 모두 마친 최종 상태를 담고 있습니다.)
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: product-service-prod
+resources:
+  - rollout.yaml
+  - ../../base/service.yaml
+images:
+  - name: product-service
+    newTag: v1
+# Kustomize의 이미지 치환 기능은 기본적으로 Deployment/StatefulSet 등
+# 잘 알려진 리소스 종류만 인식합니다. Argo Rollouts의 Rollout 커스텀 리소스도
+# 인식하도록 아래 configurations로 필드 경로를 추가로 알려줘야 합니다.
+configurations:
+  - kustomizeconfig.yaml

@@ -1,0 +1,8 @@
+# Argo Rollouts의 Rollout 리소스는 Deployment와 구조가 같지만(spec.template...),
+# Kustomize의 이미지 치환 로직은 기본적으로 Rollout을 모릅니다.
+# 이 파일이 없으면 'kustomize edit set image'나 kustomization.yaml의 images: 항목이
+# rollout.yaml 안의 이미지 태그를 바꾸지 못하고 조용히 무시합니다 — Section 6·7 실습에서
+# "Sync는 성공했는데 이미지가 안 바뀐다"는 문제가 생긴다면 이 파일부터 확인하세요.
+images:
+  - path: spec/template/spec/containers[]/image
+    kind: Rollout

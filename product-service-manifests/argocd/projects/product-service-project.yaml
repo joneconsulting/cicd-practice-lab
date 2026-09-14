@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: product-service
+  namespace: argocd
+spec:
+  description: product-service 전용 프로젝트 (Section 5 실습)
+  sourceRepos:
+    - https://github.com/<내계정>/product-service-manifests.git
+  destinations:
+    - namespace: 'product-service-*'
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist: []
+  namespaceResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  roles:
+    - name: dev-team
+      description: dev/staging 조회 및 Sync 권한
+      policies:
+        - p, proj:product-service:dev-team, applications, get, product-service/*, allow
+        - p, proj:product-service:dev-team, applications, sync, product-service/product-service-dev, allow
+        - p, proj:product-service:dev-team, applications, sync, product-service/product-service-staging, allow
+      groups:
+        - dev-team
+    - name: prod-approver
+      description: production Sync 승인 권한
+      policies:
+        - p, proj:product-service:prod-approver, applications, get, product-service/*, allow
+        - p, proj:product-service:prod-approver, applications, sync, product-service/product-service-prod, allow
+      groups:
+        - ops-team
