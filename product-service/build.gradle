@@ -9,9 +9,9 @@ version = '1.0.0'
 description = 'CommerceLab product-service — Jenkins/ArgoCD 실습용 상품 목록 제공 API'
 
 java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
+    // toolchain {
+    //     languageVersion = JavaLanguageVersion.of(17)
+    // }
 }
 
 repositories {

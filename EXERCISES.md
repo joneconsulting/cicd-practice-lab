@@ -7,12 +7,38 @@
 
 ---
 
+## 0. 시작하기 전에 (한 번만 하면 됨)
+
+### 0-1. Docker Desktop 확인
+1. Docker Desktop 실행
+2. **Settings > Kubernetes > Enable Kubernetes** 체크 → Apply & Restart
+3. 하단 고래 아이콘이 "Kubernetes is running" 상태가 될 때까지 대기 (수 분 소요)
+4. 터미널에서 확인:
+   ```bash
+   kubectl config get-contexts
+   ```
+   목록에 `docker-desktop` 이 보이면 준비 완료.
+
+### 0-2. 이 폴더를 본인 Git 저장소에 올리기
+Jenkins와 ArgoCD 둘 다 **Git 저장소를 읽어서** 동작하기 때문에, 로컬 폴더 그대로는 안 되고
+GitHub 같은 원격 저장소에 올려둔 상태여야 합니다. (예시 저장소:
+`https://github.com/joneconsulting/product-service.git`)
+
+### 0-3. Windows OS 환경에서 Powershell 사용 시
+ps1 파일을 실행하기 전에 아래 명령어를 실행합니다.
+```Windows Powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+```
+
+---
+
+
 ## Section 2 — 실습 환경 구축 (Lab 2)
 
 ```bash
-(infra) $ bash setup-mac.sh          # 또는 .\setup-windows.ps1
-(infra) $ bash verify.sh
-(infra) $ bash argocd/install-argocd.sh
+(infra) $ ./setup-mac.sh                # 또는 .\setup-windows.ps1
+(infra) $ ./verify.sh                   # 또는 .\verify.ps1
+(infra) $ ./argocd/install-argocd.sh    # 또는 .\argocd\install-argocd-windows.ps1
 ```
 - Jenkins: http://localhost:8080 (admin / admin123!)
 - ArgoCD: `kubectl --context docker-desktop port-forward svc/argocd-server -n argocd 8443:443` 후 https://localhost:8443

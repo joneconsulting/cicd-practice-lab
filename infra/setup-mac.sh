@@ -23,7 +23,9 @@ echo "4) 네임스페이스 생성 (product-service-dev / staging / prod, argo-r
 kubectl --context docker-desktop apply -f k8s-namespaces.yaml
 
 echo "5) Jenkins 컨테이너 빌드 및 기동 (최초 실행 시 수 분 소요될 수 있습니다 — kustomize/kubectl 바이너리 다운로드 포함)"
-docker compose up -d --build
+docker compose down -v 
+docker compose build --no-cache
+docker compose up -d
 
 echo ""
 echo "완료되면 http://localhost:8080 (admin / admin123!) 으로 접속하세요."

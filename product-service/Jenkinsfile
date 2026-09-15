@@ -81,26 +81,26 @@ pipeline {
 
     // Section 6: production은 클러스터를 직접 건드리지 않고, 매니페스트 저장소에
     // 이미지 태그를 갱신하는 커밋만 남깁니다. 실제 배포는 ArgoCD가 담당합니다 (Pull).
-    stage('Update GitOps Repo (production - Pull)') {
-      when {
-        expression { params.TARGET_ENV == 'production' }
-      }
-      steps {
-        withCredentials([usernamePassword(credentialsId: 'gitops-repo-cred',
-            usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')]) {
-          sh '''
-            rm -rf gitops
-            git clone https://${GIT_USER}:${GIT_TOKEN}@${MANIFESTS_REPO} gitops
-            cd gitops/overlays/production
-            kustomize edit set image $IMAGE_NAME=$IMAGE_NAME:$IMAGE_TAG
-            git config user.email "jenkins@ci.local"
-            git config user.name "jenkins-ci"
-            git commit -am "deploy: $IMAGE_NAME:$IMAGE_TAG"
-            git push origin main
-          '''
-        }
-      }
-    }
+    // stage('Update GitOps Repo (production - Pull)') {
+    //   when {
+    //     expression { params.TARGET_ENV == 'production' }
+    //   }
+    //   steps {
+    //     withCredentials([usernamePassword(credentialsId: 'gitops-repo-cred',
+    //         usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')]) {
+    //       sh '''
+    //         rm -rf gitops
+    //         git clone https://${GIT_USER}:${GIT_TOKEN}@${MANIFESTS_REPO} gitops
+    //         cd gitops/overlays/production
+    //         kustomize edit set image $IMAGE_NAME=$IMAGE_NAME:$IMAGE_TAG
+    //         git config user.email "jenkins@ci.local"
+    //         git config user.name "jenkins-ci"
+    //         git commit -am "deploy: $IMAGE_NAME:$IMAGE_TAG"
+    //         git push origin main
+    //       '''
+    //     }
+    //   }
+    // }
   }
 
   // post {
