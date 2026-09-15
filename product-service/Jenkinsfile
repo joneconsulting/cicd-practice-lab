@@ -103,14 +103,14 @@ pipeline {
     }
   }
 
-  post {
-    success {
-      slackSend(channel: '#deploy', color: 'good',
-        message: "✅ ${params.TARGET_ENV} 배포 파이프라인 성공 — ${env.IMAGE_NAME}:${env.IMAGE_TAG}")
-    }
-    failure {
-      slackSend(channel: '#deploy', color: 'danger',
-        message: "❌ ${params.TARGET_ENV} 배포 파이프라인 실패 — 빌드 번호 ${env.BUILD_NUMBER}")
-    }
-  }
+  // post {
+  //   success {
+  //     slackSend(channel: '#deploy', color: 'good',
+  //       message: "✅ ${params.TARGET_ENV} 배포 파이프라인 성공 — ${env.IMAGE_NAME}:${env.IMAGE_TAG}")
+  //   }
+  //   failure {
+  //     slackSend(channel: '#deploy', color: 'danger',
+  //       message: "❌ ${params.TARGET_ENV} 배포 파이프라인 실패 — 빌드 번호 ${env.BUILD_NUMBER}")
+  //   }
+  // }
 }
